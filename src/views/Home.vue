@@ -6,6 +6,7 @@
           <div class="field field--text">
             <label for="username">Twitter user</label>
             <input type="text" name="username" id="username" required placeholder="@username" v-model="username">
+            <svg class="twitter-logo" xmlns="http://www.w3.org/2000/svg" width="30" height="24.333"><path d="M9.5 24.333C20.833 24.333 27 15 27 6.833V6a13.548 13.548 0 003-3.167 13.836 13.836 0 01-3.5 1A6.484 6.484 0 0029.167.5 15.287 15.287 0 0125.333 2a5.952 5.952 0 00-4.5-2 6.262 6.262 0 00-6.167 6.167 3.249 3.249 0 00.167 1.333A17.231 17.231 0 012.167 1a6.383 6.383 0 00-.833 3.167A6.622 6.622 0 004 9.333 5.619 5.619 0 011.167 8.5a6.091 6.091 0 005 6 5.138 5.138 0 01-1.667.167 2.836 2.836 0 01-1.167-.167 6.314 6.314 0 005.833 4.333A12.584 12.584 0 011.5 21.5a4.614 4.614 0 01-1.5-.167 15.731 15.731 0 009.5 3" fill-rule="evenodd"/></svg>
           </div>
           <div class="field field--checkbox">
             <input type="checkbox" id="rhymes" name="rhymes" v-model="rhymes">
@@ -193,10 +194,16 @@ export default class TokenForm extends Vue {
 
       background-color: $violet-800;
       label,
-      input {
+      input
+      .twitter-logo {
         display: inline-block;
       }
+      label {
+        width: 5.5em;
+      }
       input {
+        width: calc(100% - 6em - 40px);
+
         background-color: transparent;
         border: none;
 
@@ -205,6 +212,12 @@ export default class TokenForm extends Vue {
           opacity: 1;
 
           color: $violet-500;
+        }
+      }
+      .twitter-logo {
+        vertical-align: bottom;
+        path {
+          fill: $violet-900;
         }
       }
     }
