@@ -8,11 +8,11 @@
             <input type="text" name="username" id="username" required placeholder="@username" v-model="username">
           </div>
           <div class="field field--checkbox">
-            <input type="checkbox" id="rhymes" name="rhymes" checked>
+            <input type="checkbox" id="rhymes" name="rhymes" v-model="rhymes">
             <label for="rhymes"><strong>Try</strong> to make it rhyme</label>
           </div>
           <div class="field field--checkbox">
-            <input type="checkbox" id="alexandrine" name="alexandrine" checked>
+            <input type="checkbox" id="alexandrine" name="alexandrine" v-model="alexandrine">
             <label for="alexandrine"><strong>Try</strong> to make alexandrines <button class="info-button" @click.prevent="displayInfo = !displayInfo"><span class="screen-reader-text">Help</span>?</button></label>
             <p class="infobox" v-show="displayInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
           </div>
@@ -24,6 +24,8 @@
     </div>
     <div class="result">
       <div>{{ sanitizedUsername }}</div>
+      <div>Rhymes: {{ rhymes }}</div>
+      <div>Alexandrine: {{ alexandrine }}</div>
       <div>{{ sentences }}</div>
     </div>
   </div>
@@ -45,6 +47,8 @@ export default class TokenForm extends Vue {
   private params: URLSearchParams | null = null;
   private nameParam: string = '';
   private username: string = '@realDonaldTrump';
+  private rhymes: boolean = true;
+  private alexandrine: boolean = true;
   private displayInfo: boolean = false;
   private sentences: any[] = [];
 
