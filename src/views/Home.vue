@@ -31,11 +31,28 @@ import Header from '@/components/Header.vue';
 
 export default class TokenForm extends Vue {
   private generating: boolean = false;
+  private params: URLSearchParams | null = null;
+  private nameParam: string = '';
   private username: string = '';
   private sentences: any[] = [];
 
+  public async created() {
+    this.params = new URLSearchParams(document.location.search.substring(1));
+    const nameParam = this.params.get('username');
+    if (nameParam) {
+      this.username = nameParam;
+      this.testGeneratePoem();
+    }
+  }
+
   private testGeneratePoem() {
     this.generating = true;
+    console.log(this.nameParam);
+    if (this.nameParam === '' && this.params !== null) {
+      console.log('yolo');
+      // this.params.set('username', this.username);
+      // document.location.search = `?username=${this.username}`;
+    }
     this.sentences = [];
     // Test data
     const tweets = [
