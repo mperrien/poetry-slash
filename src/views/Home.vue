@@ -185,7 +185,7 @@ export default class TokenForm extends Vue {
   }
   .field {
     label {
-      margin-right: 1em;
+      margin-right: .5em;
 
       color: $violet-300;
     }
@@ -202,7 +202,7 @@ export default class TokenForm extends Vue {
         width: 5.5em;
       }
       input {
-        width: calc(100% - 6em - 40px);
+        width: calc(100% - 5.5em - 40px);
 
         background-color: transparent;
         border: none;
