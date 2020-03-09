@@ -4,7 +4,7 @@
       <form class="form">
         <div class="form__field">
           <label for="username">Twitter user</label>
-          <input type="text" name="username" id="username" placeholder="@realDonaldTrump" required v-model="username">
+          <input type="text" name="username" id="username" required v-model="username">
         </div>
         <div class="form__submit">
           <button type="submit" :class="{'loading': generating}" @click.prevent='testGeneratePoem'>Generate Poem</button>
@@ -33,7 +33,7 @@ export default class TokenForm extends Vue {
   private generating: boolean = false;
   private params: URLSearchParams | null = null;
   private nameParam: string = '';
-  private username: string = '';
+  private username: string = '@realDonaldTrump';
   private sentences: any[] = [];
 
   public async created() {
