@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <img src="../assets/images/twitter-poem-generator.png" alt="" />
-    <h1>Twitter Poem Generator</h1>
+    <h1>Twitter Poetry Generator</h1>
   </header>
 </template>
 
