@@ -9,11 +9,12 @@
           </div>
           <div class="field field--checkbox">
             <input type="checkbox" id="rhymes" name="rhymes" checked>
-            <label for="rhymes">Try to make rhymes</label>
+            <label for="rhymes"><strong>Try</strong> to make it rhyme</label>
           </div>
           <div class="field field--checkbox">
             <input type="checkbox" id="alexandrine" name="alexandrine" checked>
-            <label for="alexandrine">Try to make alexandrines</label>
+            <label for="alexandrine"><strong>Try</strong> to make alexandrines <button class="info-button" @click.prevent="displayInfo = !displayInfo"><span class="screen-reader-text">Help</span>?</button></label>
+            <p class="infobox" v-show="displayInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
           </div>
         </div>
         <div class="form__submit">
@@ -44,6 +45,7 @@ export default class TokenForm extends Vue {
   private params: URLSearchParams | null = null;
   private nameParam: string = '';
   private username: string = '@realDonaldTrump';
+  private displayInfo: boolean = false;
   private sentences: any[] = [];
 
   public async created() {
@@ -267,6 +269,14 @@ export default class TokenForm extends Vue {
           border: 2px solid $violet-300;
           cursor: pointer;
         }
+      }
+      .infobox {
+        padding: .5em;
+
+        background-color: $violet-900;
+
+        color: $violet-300;
+        font-size: .8em;
       }
     }
   }
