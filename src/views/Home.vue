@@ -2,9 +2,19 @@
   <div class="home">
     <div class="form-wrapper">
       <form class="form">
-        <div class="form__field">
-          <label for="username">Twitter user</label>
-          <input type="text" name="username" id="username" required v-model="username">
+        <div class="form__fields">
+          <div class="field field--text">
+            <label for="username">Twitter user</label>
+            <input type="text" name="username" id="username" required placeholder="@username" v-model="username">
+          </div>
+          <div class="field--checkbox">
+            <input type="checkbox" id="rhymes" name="rhymes" checked>
+            <label for="rhymes">Try to make rhymes</label>
+          </div>
+          <div class="field--checkbox">
+            <input type="checkbox" id="alexandrine" name="alexandrine" checked>
+            <label for="alexandrine">Try to make alexandrines</label>
+          </div>
         </div>
         <div class="form__submit">
           <button type="submit" :class="{'loading': generating}" @click.prevent='testGeneratePoem'>Generate Poem</button>
@@ -47,12 +57,12 @@ export default class TokenForm extends Vue {
 
   private testGeneratePoem() {
     this.generating = true;
-    console.log(this.nameParam);
+    // console.log(this.nameParam);
     if (this.nameParam === '' && this.params !== null) {
-      console.log('yolo');
+      // console.log('yolo');
       // this.params.set('username', encodeURI(this.username));
       const encodedUsername: string = encodeURI(this.username);
-      console.log(encodedUsername);
+      // console.log(encodedUsername);
       // document.location.search = `?username=${encodedUsername}`;
     }
     this.sentences = [];
@@ -149,36 +159,53 @@ export default class TokenForm extends Vue {
 .form-wrapper {
   padding: 2em;
 
-  background-color: darken($violet, 15);
+  background-color: $violet-900;
 }
 .form {
   margin: 0 auto;
-  width: 20em;
+  width: 24em;
   max-width: 90vw;
-  &__field,
+  &__fields,
   &__submit {
     width: 100%;
   }
-  &__field {
+  &__fields {
     margin-bottom: 1em;
-    label,
-    input {
-      display: block;
-      width: 100%;
-    }
+
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  .field {
+    padding: .75em;
     label {
-      color: lighten($violet, 35);
+      margin-right: 1em;
+
+      color: $violet-300;
     }
-    input {
-      height: 2em;
-      padding: 0 .5em;
+    &--text {
+      background-color: $violet-800;
+      // border-bottom: 1px solid lighten($blue-light, 15);
+      label,
+      input {
+        display: inline-block;
+      }
+      input {
+        // height: 2em;
+        // padding: 0 .5em;
 
-      background-color: $violet;
-      border: none;
-      border-radius: 3px;
-      box-shadow: 0 3px 12px rgba(0,0,0,.3);
+        background-color: transparent;
+        border: none;
 
-      color: white;
+        color: $violet-100;
+        &::placeholder {
+          opacity: 1;
+
+          color: $violet-500;
+        }
+      }
+    }
+    &--checkbox {
+      background-color: $violet-700;
     }
   }
   &__submit {
@@ -191,10 +218,10 @@ export default class TokenForm extends Vue {
       background-color: $yellow;
       border: none;
       border-radius: 3px;
-      box-shadow: 0 3px 12px rgba(0,0,0,.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
       cursor: pointer;
 
-      color: $violet;
+      color: $violet-700;
       font-size: .8em;
       font-weight: 700;
       line-height: 2rem;
@@ -202,11 +229,11 @@ export default class TokenForm extends Vue {
 
       transition: all .2s ease-out;
       &:hover {
-        box-shadow: 0 2px 6px rgba(0,0,0,.6);
+        box-shadow: 0 1px 2px rgba(0,0,0,.6);
         transform: translateY(1px);
       }
       &:active {
-        box-shadow: 0 1px 3px rgba(0,0,0,.7);
+        box-shadow: 0 1px 1px rgba(0,0,0,.7);
         transform: translateY(2px);
       }
       &.loading {

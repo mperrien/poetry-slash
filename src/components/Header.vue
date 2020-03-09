@@ -23,7 +23,7 @@ export default class Header extends Vue {}
   h1 {
     margin: 0;
 
-    color: $violet;
+    color: $violet-700;
     font-size: 2em;
   }
   img {
