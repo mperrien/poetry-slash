@@ -36,6 +36,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 // @ is an alias to /src
 import Header from '@/components/Header.vue';
+import syllable from 'syllable';
 
 @Component({
   components: {
@@ -145,7 +146,11 @@ export default class TokenForm extends Vue {
       }
       const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
       tweetAsSentences.forEach((s) => {
-        this.sentences.push(s);
+        const sentenceObject = {
+          text: s,
+          syllables: syllable(s),
+        };
+        this.sentences.push(sentenceObject);
       });
     });
     this.generating = false;
