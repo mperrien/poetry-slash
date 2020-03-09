@@ -7,11 +7,11 @@
             <label for="username">Twitter user</label>
             <input type="text" name="username" id="username" required placeholder="@username" v-model="username">
           </div>
-          <div class="field--checkbox">
+          <div class="field field--checkbox">
             <input type="checkbox" id="rhymes" name="rhymes" checked>
             <label for="rhymes">Try to make rhymes</label>
           </div>
-          <div class="field--checkbox">
+          <div class="field field--checkbox">
             <input type="checkbox" id="alexandrine" name="alexandrine" checked>
             <label for="alexandrine">Try to make alexandrines</label>
           </div>
@@ -171,28 +171,26 @@ export default class TokenForm extends Vue {
   }
   &__fields {
     margin-bottom: 1em;
+    overflow: hidden;
 
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
   }
   .field {
-    padding: .75em;
     label {
       margin-right: 1em;
 
       color: $violet-300;
     }
     &--text {
+      padding: .75em;
+
       background-color: $violet-800;
-      // border-bottom: 1px solid lighten($blue-light, 15);
       label,
       input {
         display: inline-block;
       }
       input {
-        // height: 2em;
-        // padding: 0 .5em;
-
         background-color: transparent;
         border: none;
 
@@ -205,7 +203,71 @@ export default class TokenForm extends Vue {
       }
     }
     &--checkbox {
+      padding: .75em .75em .25em;
+
       background-color: $violet-700;
+      &:last-child {
+        padding-bottom: .75em;
+      }
+      input {
+        position: absolute;
+        top: auto;
+
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+
+        clip: rect(1px 1px 1px 1px); /* IE 6/7 */
+        clip: rect(1px, 1px, 1px, 1px);
+
+        white-space: nowrap;
+        &:focus {
+          + label::before {
+            border-color: $violet-100;
+          }
+        }
+        &:checked {
+          + label::after {
+            content: '';
+
+            position: absolute;
+            top: 3px;
+            left: 4px;
+
+            display: block;
+            height: 11px;
+            width: 11px;
+
+            background-color: $yellow;
+          }
+          + label::before {
+            background-color: transparent;
+            border-color: $yellow;
+          }
+        }
+      }
+      label {
+        position: relative;
+
+        padding-left: 27px;
+
+        color: $violet-100;
+        &::before {
+          content: '';
+
+          position: absolute;
+          top: -1px;
+          left: 0;
+
+          display: block;
+          height: 15px;
+          width: 15px;
+
+          background-color: $violet-700;
+          border: 2px solid $violet-300;
+          cursor: pointer;
+        }
+      }
     }
   }
   &__submit {
