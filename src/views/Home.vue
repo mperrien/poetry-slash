@@ -50,8 +50,10 @@ export default class TokenForm extends Vue {
     console.log(this.nameParam);
     if (this.nameParam === '' && this.params !== null) {
       console.log('yolo');
-      // this.params.set('username', this.username);
-      // document.location.search = `?username=${this.username}`;
+      // this.params.set('username', encodeURI(this.username));
+      const encodedUsername: string = encodeURI(this.username);
+      console.log(encodedUsername);
+      // document.location.search = `?username=${encodedUsername}`;
     }
     this.sentences = [];
     // Test data
