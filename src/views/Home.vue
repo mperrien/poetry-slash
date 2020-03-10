@@ -54,6 +54,9 @@ export default class TokenForm extends Vue {
   private displayInfo: boolean = false;
   private sentences: any[] = [];
 
+  private twitterConsumerKey: string = ''; // Add your API key here
+  private twitterConsumerSecret: string = ''; // Add your API secret key here
+
   public async created() {
     this.params = new URLSearchParams(document.location.search.substring(1));
     const nameParam = this.params.get('username');
