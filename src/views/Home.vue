@@ -82,22 +82,45 @@ export default class TokenForm extends Vue {
 
     // // Test with Node-Twitter
     // // CORS error.
-    const Twitter = require('twitter');
+    // const Twitter = require('twitter');
 
-    const client = new Twitter({
+    // const client = new Twitter({
+    //   consumer_key: this.twitterConsumerKey,
+    //   consumer_secret: this.twitterConsumerSecret,
+    //   access_token_key: this.twitterAccessToken,
+    //   access_token_secret: this.twitterAccessTokenSecret,
+    // });
+
+    // const params = {screen_name: 'nodejs'};
+    // client.get('statuses/user_timeline', params, (error: any, tweets: any, response: any) => {
+    //   if (!error) {
+    //     console.log(tweets);
+    //   }
+    // });
+    // // End node-Twitter test
+
+    // Trying twitter-lite (NPM)
+    const Twitter = require('twitter-lite');
+    const user = new Twitter({
       consumer_key: this.twitterConsumerKey,
       consumer_secret: this.twitterConsumerSecret,
-      access_token_key: this.twitterAccessToken,
-      access_token_secret: this.twitterAccessTokenSecret,
     });
 
+    const response = await user.getBearerToken();
+    const app = new Twitter({
+      bearer_token: response.access_token,
+    });
     const params = {screen_name: 'nodejs'};
-    client.get('statuses/user_timeline', params, (error: any, tweets: any, response: any) => {
+    app.get('statuses/user_timeline', params, (error: any, tweets: any, response: any) => {
       if (!error) {
         console.log(tweets);
+      } else {
+        console.log(error);
       }
     });
-    // // End node-Twitter test
+
+
+
     // await this.requestToken();
     // await this.getTweets();
     // fetchHomeTimeline({
