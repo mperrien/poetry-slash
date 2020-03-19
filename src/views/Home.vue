@@ -77,9 +77,28 @@ export default class TokenForm extends Vue {
     const nameParam = this.params.get('username');
     if (nameParam) {
       this.username = nameParam;
-      this.testGeneratePoem();
+      // this.testGeneratePoem();
     }
-    await this.requestToken();
+
+    // // Test with Node-Twitter
+    // // CORS error.
+    const Twitter = require('twitter');
+
+    const client = new Twitter({
+      consumer_key: this.twitterConsumerKey,
+      consumer_secret: this.twitterConsumerSecret,
+      access_token_key: this.twitterAccessToken,
+      access_token_secret: this.twitterAccessTokenSecret,
+    });
+
+    const params = {screen_name: 'nodejs'};
+    client.get('statuses/user_timeline', params, (error: any, tweets: any, response: any) => {
+      if (!error) {
+        console.log(tweets);
+      }
+    });
+    // // End node-Twitter test
+    // await this.requestToken();
     // await this.getTweets();
     // fetchHomeTimeline({
     //   oAuth: {
@@ -102,19 +121,19 @@ export default class TokenForm extends Vue {
     //   });
   }
 
-  private async requestToken() {
-    const oAuthConfig = {
-      callback: 'oob',
-      consumer_key: this.twitterConsumerKey,
-      consumer_secret: this.twitterConsumerSecret,
-    };
-    try {
-      const response = await axios.post(this.requestTokenURL, oAuthConfig);
-      console.log(response);
-    } catch (e) {
-      throw new Error('Cannot get an OAuth request token');
-    }
-  }
+  // private async requestToken() {
+  //   const oAuthConfig = {
+  //     callback: 'oob',
+  //     consumer_key: this.twitterConsumerKey,
+  //     consumer_secret: this.twitterConsumerSecret,
+  //   };
+  //   try {
+  //     const response = await axios.post(this.requestTokenURL, oAuthConfig);
+  //     console.log(response);
+  //   } catch (e) {
+  //     throw new Error('Cannot get an OAuth request token');
+  //   }
+  // }
 
   // private async getTweets() {
   //   try {
