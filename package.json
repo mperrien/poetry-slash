@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/node-fetch": "^2.5.5",
+    "axios": "^0.19.2",
     "normalize-scss": "^7.0.1",
     "syllable": "^4.0.1",
     "twitter-api-ts": "0.0.33",

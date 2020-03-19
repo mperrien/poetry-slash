@@ -36,7 +36,11 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 // @ is an alias to /src
 import Header from '@/components/Header.vue';
+import axios from 'axios';
 import syllable from 'syllable';
+
+// import { fetchHomeTimeline } from 'twitter-api-ts';
+// import * as option from 'fp-ts/lib/Option';
 
 @Component({
   components: {
@@ -54,20 +58,72 @@ export default class TokenForm extends Vue {
   private displayInfo: boolean = false;
   private sentences: any[] = [];
 
-  // private twitterConsumerKey: any = process.env.TWITTERCONSUMERKEY;
-  private twitterConsumerKey: any = process.env.TWITTERCONSKEYLOCAL;
-  private twitterConsumerSecret: any = process.env.TWITTERCONSUMERKEY;
+  private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
+  private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
+  private twitterAccessToken: any = process.env.VUE_APP_TWITTERTOKEN;
+  private twitterAccessTokenSecret: any = process.env.VUE_APP_TWITTERTOKENSECRET;
+  private requestTokenURL: string = 'https://cors-anywhere.herokuapp.com/https://api.twitter.com/oauth/request_token';
+  private accessTokenURL: string = 'https://api.twitter.com/oauth/access_token';
+  private authorizeURL: string = 'https://api.twitter.com/oauth/authorize';
+  private endpointURL: string = 'https://api.twitter.com/labs/2/tweets';
+  private requestParams = {
+    'ids': '1138505981460193280',
+    'tweet.fields': 'created_at',
+  };
 
   public async created() {
-    console.log(this.twitterConsumerKey);
-    console.log(process.env);
+    // console.log(this.twitterConsumerKey);
     this.params = new URLSearchParams(document.location.search.substring(1));
     const nameParam = this.params.get('username');
     if (nameParam) {
       this.username = nameParam;
       this.testGeneratePoem();
     }
+    await this.requestToken();
+    // await this.getTweets();
+    // fetchHomeTimeline({
+    //   oAuth: {
+    //       consumerKey: this.twitterConsumerKey,
+    //       consumerSecret: this.twitterConsumerSecret,
+    //       token: option.some(this.twitterConsumerSecret),
+    //       tokenSecret: option.some(this.twitterAccessTokenSecret),
+    //   },
+    //   query: {
+    //       count: option.some(50),
+    //   },
+    // })
+    //   // We use fp-ts’ Task type, which is lazy. Running the task returns a
+    //   // promise.
+    //   .run()
+    //   .then(response => {
+    //     console.log('yolo');
+    //       console.log(response);
+    //       // => Either<ErrorResponse, TwitterAPITimelineResponseT>
+    //   });
   }
+
+  private async requestToken() {
+    const oAuthConfig = {
+      callback: 'oob',
+      consumer_key: this.twitterConsumerKey,
+      consumer_secret: this.twitterConsumerSecret,
+    };
+    try {
+      const response = await axios.post(this.requestTokenURL, oAuthConfig);
+      console.log(response);
+    } catch (e) {
+      throw new Error('Cannot get an OAuth request token');
+    }
+  }
+
+  // private async getTweets() {
+  //   try {
+  //     const response = await axios.get(`https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=twitterapi&count=2`);
+  //     console.log(response);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
 
   private testGeneratePoem() {
     this.generating = true;
