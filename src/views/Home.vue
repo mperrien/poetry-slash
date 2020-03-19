@@ -24,7 +24,8 @@
       </form>
     </div>
     <div class="result">
-      <div>{{ sanitizedUsername }}</div>
+      <div>{{ atUsername }}</div>
+      <div>{{ screenname }}</div>
       <div>Rhymes: {{ rhymes }}</div>
       <div>Alexandrine: {{ alexandrine }}</div>
       <div>{{ sentences }}</div>
@@ -48,7 +49,7 @@ import syllable from 'syllable';
   },
 })
 
-export default class TokenForm extends Vue {
+export default class Home extends Vue {
   private generating: boolean = false;
   private params: URLSearchParams | null = null;
   private nameParam: string = '';
@@ -56,12 +57,15 @@ export default class TokenForm extends Vue {
   private rhymes: boolean = true;
   private alexandrine: boolean = true;
   private displayInfo: boolean = false;
+  private tweets: any | null = null;
   private sentences: any[] = [];
+  // private installed = !!window.twttr
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterAccessToken: any = process.env.VUE_APP_TWITTERTOKEN;
   private twitterAccessTokenSecret: any = process.env.VUE_APP_TWITTERTOKENSECRET;
+  private twitterBearerToken: any = process.env.VUE_APP_TWITTERBEARERTOKEN;
   private requestTokenURL: string = 'https://cors-anywhere.herokuapp.com/https://api.twitter.com/oauth/request_token';
   private accessTokenURL: string = 'https://api.twitter.com/oauth/access_token';
   private authorizeURL: string = 'https://api.twitter.com/oauth/authorize';
@@ -101,27 +105,32 @@ export default class TokenForm extends Vue {
 
     // Trying twitter-lite (NPM)
     const Twitter = require('twitter-lite');
-    const user = new Twitter({
-      subdomain: "/api/",
-      consumer_key: this.twitterConsumerKey,
-      consumer_secret: this.twitterConsumerSecret,
-    });
+    // const user = new Twitter({
+    //   subdomain: "cors-anywhere.herokuapp.com/https://api",
+    //   consumer_key: this.twitterConsumerKey,
+    //   consumer_secret: this.twitterConsumerSecret,
+    // });
 
-    const response = await user.getBearerToken();
+    // const response = await user.getBearerToken({
+    //   subdomain: "cors-anywhere.herokuapp.com/https://api",
+    // });
     const app = new Twitter({
-      subdomain: "/api/",
-      bearer_token: response.access_token,
+      subdomain: "cors-anywhere.herokuapp.com/https://api",
+      bearer_token: this.twitterBearerToken,
     });
-    const params = {screen_name: 'nodejs'};
-    app.get('statuses/user_timeline', params, (error: any, tweets: any, response: any) => {
-      if (!error) {
-        console.log(tweets);
-      } else {
-        console.log(error);
-      }
-    });
-
-
+    const params = {
+      screen_name: this.screenname,
+      count: 200,
+    };
+    try {
+      console.log('1');
+      const response = await app.get('statuses/user_timeline', params);
+      console.log('2');
+      console.log(response);
+    } catch (e) {
+      console.log('yolo');
+      console.log(e);
+    }
 
     // await this.requestToken();
     // await this.getTweets();
@@ -262,12 +271,21 @@ export default class TokenForm extends Vue {
     this.generating = false;
   }
 
-  private get sanitizedUsername() {
+  private get atUsername() {
     const first = this.username.charAt(0);
     if (first === '@') {
       return this.username;
     } else {
       return `@${this.username}`;
+    }
+  }
+
+  private get screenname() {
+    const first = this.username.charAt(0);
+    if (first === '@') {
+      return this.username.substring(1);
+    } else {
+      return this.username;
     }
   }
 }
