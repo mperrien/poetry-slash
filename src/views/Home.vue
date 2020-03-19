@@ -102,12 +102,14 @@ export default class TokenForm extends Vue {
     // Trying twitter-lite (NPM)
     const Twitter = require('twitter-lite');
     const user = new Twitter({
+      subdomain: "cors-anywhere.herokuapp.com/https://api",
       consumer_key: this.twitterConsumerKey,
       consumer_secret: this.twitterConsumerSecret,
     });
 
     const response = await user.getBearerToken();
     const app = new Twitter({
+      subdomain: "cors-anywhere.herokuapp.com/https://api",
       bearer_token: response.access_token,
     });
     const params = {screen_name: 'nodejs'};
