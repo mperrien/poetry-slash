@@ -23,11 +23,16 @@
         </div>
       </form>
     </div>
-    <div class="result">
+    <div class="poem" v-if="ready">
+      <h2 class="poem__title">{{ title }}</h2>
+      <div class="poem__author">A poem by {{ author }}</div>
+    </div>
+    <div class="debug">
       <div>{{ atUsername }}</div>
       <div>{{ screenname }}</div>
       <div>Rhymes: {{ rhymes }}</div>
       <div>Alexandrine: {{ alexandrine }}</div>
+      <div>{{ tweets }}</div>
       <div>{{ sentences }}</div>
     </div>
   </div>
@@ -51,6 +56,7 @@ import syllable from 'syllable';
 
 export default class Home extends Vue {
   private generating: boolean = false;
+  private ready: boolean = false;
   private params: URLSearchParams | null = null;
   private nameParam: string = '';
   private username: string = '@realDonaldTrump';
@@ -58,8 +64,10 @@ export default class Home extends Vue {
   private alexandrine: boolean = true;
   private displayInfo: boolean = false;
   private tweets: any | null = null;
+  private error: any | null = null;
   private sentences: any[] = [];
-  // private installed = !!window.twttr
+  private title: string = '';
+  private author: string = '';
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
@@ -83,102 +91,26 @@ export default class Home extends Vue {
       this.username = nameParam;
       // this.testGeneratePoem();
     }
-
-    // // Test with Node-Twitter
-    // // CORS error.
-    // const Twitter = require('twitter');
-
-    // const client = new Twitter({
-    //   consumer_key: this.twitterConsumerKey,
-    //   consumer_secret: this.twitterConsumerSecret,
-    //   access_token_key: this.twitterAccessToken,
-    //   access_token_secret: this.twitterAccessTokenSecret,
-    // });
-
-    // const params = {screen_name: 'nodejs'};
-    // client.get('statuses/user_timeline', params, (error: any, tweets: any, response: any) => {
-    //   if (!error) {
-    //     console.log(tweets);
-    //   }
-    // });
-    // // End node-Twitter test
-
-    // Trying twitter-lite (NPM)
     const Twitter = require('twitter-lite');
-    // const user = new Twitter({
-    //   subdomain: "cors-anywhere.herokuapp.com/https://api",
-    //   consumer_key: this.twitterConsumerKey,
-    //   consumer_secret: this.twitterConsumerSecret,
-    // });
-
-    // const response = await user.getBearerToken({
-    //   subdomain: "cors-anywhere.herokuapp.com/https://api",
-    // });
     const app = new Twitter({
-      subdomain: "cors-anywhere.herokuapp.com/https://api",
+      subdomain: 'cors-anywhere.herokuapp.com/https://api',
       bearer_token: this.twitterBearerToken,
     });
     const params = {
       screen_name: this.screenname,
       count: 200,
+      tweet_mode: 'extended',
     };
     try {
-      console.log('1');
       const response = await app.get('statuses/user_timeline', params);
-      console.log('2');
-      console.log(response);
+      this.tweets = response;
     } catch (e) {
-      console.log('yolo');
-      console.log(e);
+      this.error = e;
     }
-
-    // await this.requestToken();
-    // await this.getTweets();
-    // fetchHomeTimeline({
-    //   oAuth: {
-    //       consumerKey: this.twitterConsumerKey,
-    //       consumerSecret: this.twitterConsumerSecret,
-    //       token: option.some(this.twitterConsumerSecret),
-    //       tokenSecret: option.some(this.twitterAccessTokenSecret),
-    //   },
-    //   query: {
-    //       count: option.some(50),
-    //   },
-    // })
-    //   // We use fp-ts’ Task type, which is lazy. Running the task returns a
-    //   // promise.
-    //   .run()
-    //   .then(response => {
-    //     console.log('yolo');
-    //       console.log(response);
-    //       // => Either<ErrorResponse, TwitterAPITimelineResponseT>
-    //   });
   }
 
-  // private async requestToken() {
-  //   const oAuthConfig = {
-  //     callback: 'oob',
-  //     consumer_key: this.twitterConsumerKey,
-  //     consumer_secret: this.twitterConsumerSecret,
-  //   };
-  //   try {
-  //     const response = await axios.post(this.requestTokenURL, oAuthConfig);
-  //     console.log(response);
-  //   } catch (e) {
-  //     throw new Error('Cannot get an OAuth request token');
-  //   }
-  // }
-
-  // private async getTweets() {
-  //   try {
-  //     const response = await axios.get(`https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=twitterapi&count=2`);
-  //     console.log(response);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-
   private testGeneratePoem() {
+    this.ready = false;
     this.generating = true;
     // console.log(this.nameParam);
     if (this.nameParam === '' && this.params !== null) {
@@ -188,77 +120,10 @@ export default class Home extends Vue {
       // console.log(encodedUsername);
       // document.location.search = `?username=${encodedUsername}`;
     }
+    this.author = this.tweets[0].user.name;
     this.sentences = [];
-    // Test data
-    const tweets = [
-      {
-        created_at: 'Thu May 10 15:24:15 +0000 2018',
-        id_str: '850006245121695744',
-        text: 'Who knows what this means, but it sounds good to me!',
-        user: {},
-        place: {},
-        entities: {},
-        extended_entities: {},
-      },
-      {
-        created_at: 'Thu May 10 15:24:15 +0000 2018',
-        id_str: '850006245121695744',
-        text: 'The New York Times is an embarrassment to journalism. They were a dead paper before I went into politics, and they will be a dead paper afte...',
-        display_text_range: [0, 140],
-        truncated: true,
-        user: {},
-        place: {},
-        extended_tweet: {
-          full_text: 'The New York Times is an embarrassment to journalism. They were a dead paper before I went into politics, and they will be a dead paper after I leave, which will be in 5 years. Fake News is the Enemy of the people!',
-          display_text_range: [0, 214],
-          entities: {},
-        },
-        entities: {},
-        extended_entities: {},
-      },
-      {
-        created_at: 'Thu May 10 15:24:15 +0000 2018',
-        id_str: '850006245121695744',
-        text: 'We have a perfectly coordinated and fine tuned plan at the White House for our attack on CoronaVirus. We moved VERY early to close borders t...',
-        display_text_range: [0, 140],
-        truncated: true,
-        user: {},
-        place: {},
-        extended_tweet: {
-          full_text: 'We have a perfectly coordinated and fine tuned plan at the White House for our attack on CoronaVirus. We moved VERY early to close borders to certain areas, which was a Godsend. V.P. is doing a great job. The Fake News Media is doing everything possible to make us look bad. Sad!',
-          display_text_range: [0, 279],
-          entities: {},
-        },
-        entities: {},
-        extended_entities: {},
-      },
-      {
-        created_at: 'Thu May 10 15:24:15 +0000 2018',
-        id_str: '850006245121695744',
-        text: 'Thank you @SenatorTimScott!',
-        user: {},
-        place: {},
-        entities: {},
-        extended_entities: {},
-      },
-      {
-        created_at: 'Thu May 10 15:24:15 +0000 2018',
-        id_str: '850006245121695744',
-        text: 'Sleepy Joe in St. Louis, Missouri today: “We can only re-elect @realDonaldTrump.” #KAG2020LandslideVictory',
-        user: {},
-        place: {},
-        entities: {},
-        extended_entities: {},
-      },
-    ];
-    // const tweetsContent: string[] = [];
-    tweets.forEach( (t) => {
-      let tweet: string = '';
-      if (t.truncated === true) {
-        tweet = t.extended_tweet.full_text;
-      } else {
-        tweet = t.text;
-      }
+    this.tweets.forEach( (t: any) => {
+      const tweet: string = t.full_text;
       const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
       tweetAsSentences.forEach((s) => {
         const sentenceObject = {
@@ -268,7 +133,25 @@ export default class Home extends Vue {
         this.sentences.push(sentenceObject);
       });
     });
+    this.generateTitle();
     this.generating = false;
+    this.ready = true;
+  }
+
+  private generateTitle() {
+    let syllables: number = 0;
+    let s: any | null = null;
+    while (syllables < 6 || syllables > 15) {
+      const i = this.pickARandomSentenceIndex();
+      s = this.sentences[i];
+      syllables = s.syllables;
+    }
+    this.title = s.text;
+  }
+
+  private pickARandomSentenceIndex() {
+    const index = Math.floor(Math.random() * Math.floor(this.sentences.length));
+    return index;
   }
 
   private get atUsername() {
@@ -478,7 +361,8 @@ export default class Home extends Vue {
     }
   }
 }
-.result {
+.poem,
+.debug {
   padding: 2em;
 }
 </style>
