@@ -13,6 +13,10 @@
             <label for="rhymes"><strong>Try</strong> to make it rhyme</label>
           </div>
           <div class="field field--checkbox">
+            <input type="checkbox" id="shortlines" name="shortlines" v-model="shortlines">
+            <label for="shortlines">Remove sentences longer than 20 syllables (recommended).</label>
+          </div>
+          <div class="field field--checkbox">
             <input type="checkbox" id="alexandrine" name="alexandrine" v-model="alexandrine">
             <label for="alexandrine"><strong>Try</strong> to make alexandrines <button class="info-button" @click.prevent="displayInfo = !displayInfo"><span class="screen-reader-text">Help</span>?</button></label>
             <p class="infobox" v-show="displayInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
@@ -33,6 +37,7 @@
       <div>{{ screenname }}</div>
       <div>Rhymes: {{ rhymes }}</div>
       <div>Alexandrine: {{ alexandrine }}</div>
+      <div>Exclude longer sentences: {{ shortlines }}</div>
       <div v-if="tweets !== null">Number of tweets retrieved: {{ tweets.length }}</div>
       <div v-if="sentences !== null">Number of sentences: {{ sentences.length }}</div>
     </div>
@@ -63,6 +68,7 @@ export default class Home extends Vue {
   private username: string = '@realDonaldTrump';
   private rhymes: boolean = true;
   private alexandrine: boolean = true;
+  private shortlines: boolean = true;
   private style: string = 'classical';
   private displayInfo: boolean = false;
   private tweets: any | null = null;
@@ -159,7 +165,11 @@ export default class Home extends Vue {
               text: s,
               syllables: syllable(s),
             };
-            this.sentences.push(sentenceObject);
+            if (this.shortlines) {
+              if (sentenceObject.syllables < 21) {
+                this.sentences.push(sentenceObject);
+              }
+            }
           }
         });
       });
