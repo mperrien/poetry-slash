@@ -126,11 +126,13 @@ export default class Home extends Vue {
       const tweet: string = t.full_text;
       const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
       tweetAsSentences.forEach((s) => {
-        const sentenceObject = {
-          text: s,
-          syllables: syllable(s),
-        };
-        this.sentences.push(sentenceObject);
+        if (!s.includes('http://') && !s.includes('https://')) { // Filter out sentences with links.
+          const sentenceObject = {
+            text: s,
+            syllables: syllable(s),
+          };
+          this.sentences.push(sentenceObject);
+        }
       });
     });
     this.generateTitle();
