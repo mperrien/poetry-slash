@@ -144,6 +144,9 @@ export default class Home extends Vue {
   private async generatePoem() {
     this.ready = false;
     this.generating = true;
+    this.tweets = null;
+    this.error = null;
+    this.sentences = [];
     // console.log(this.nameParam);
     if (this.nameParam === '' && this.params !== null) {
       // console.log('yolo');
