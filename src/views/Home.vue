@@ -32,8 +32,8 @@
       <div>{{ screenname }}</div>
       <div>Rhymes: {{ rhymes }}</div>
       <div>Alexandrine: {{ alexandrine }}</div>
-      <div>{{ tweets }}</div>
-      <div>{{ sentences }}</div>
+      <div>Number of tweets retrieved: {{ tweets.length }}</div>
+      <div>Number of sentences: {{ sentences.length }}</div>
     </div>
   </div>
 </template>
@@ -100,6 +100,7 @@ export default class Home extends Vue {
       screen_name: this.screenname,
       count: 200,
       tweet_mode: 'extended',
+      include_rts: false,
     };
     try {
       const response = await app.get('statuses/user_timeline', params);
