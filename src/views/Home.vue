@@ -160,14 +160,15 @@ export default class Home extends Vue {
       this.author = this.tweets[0].user.name;
       this.sentences = [];
       this.tweets.forEach( (t: any) => {
-        const tweet: string = t.full_text;
+        const tweet: string = this.filterScreennameFromReplies(t);
         const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
-        tweetAsSentences.forEach((s) => {
+        tweetAsSentences.forEach( async (s) => {
           if (!s.includes('http://') && !s.includes('https://')) { // Filter out sentences with links.
             const sentenceObject = {
               text: s,
               syllables: syllable(s),
             };
+
             if (this.shortlines) {
               if (sentenceObject.syllables < 21) {
                 this.sentences.push(sentenceObject);
@@ -208,6 +209,17 @@ export default class Home extends Vue {
   private pickARandomSentenceIndex() {
     const index = Math.floor(Math.random() * Math.floor(this.sentences.length));
     return index;
+  }
+
+  private filterScreennameFromReplies(t: any) {
+    let tweet: string = '';
+    if (t.in_reply_to_screen_name !== null) {
+      const charsToRemove = t.in_reply_to_screen_name.length + 2; // + 2 = @ + ' '
+      tweet = t.full_text.substring(charsToRemove);
+    } else {
+      tweet = t.full_text;
+    }
+    return tweet;
   }
 
   private get atUsername() {
