@@ -149,6 +149,7 @@ export default class Home extends Vue {
   }
 
   private async generatePoem() {
+    // TODO Don't make the alexandrines ? a button, because it prevents submitting the form with return key
     this.ready = false;
     this.generating = true;
     this.tweets = null;
@@ -169,6 +170,7 @@ export default class Home extends Vue {
       this.sentences = [];
       this.tweets.forEach( (t: any) => {
         const tweet: string = this.filterScreennameFromReplies(t);
+        // TODO Better filter usernames at begining of tweets.
         const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
         tweetAsSentences.forEach( async (s) => {
           if (!s.includes('://')) { // Filter out sentences with links.
