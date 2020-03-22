@@ -32,8 +32,8 @@
       <div>{{ screenname }}</div>
       <div>Rhymes: {{ rhymes }}</div>
       <div>Alexandrine: {{ alexandrine }}</div>
-      <div>Number of tweets retrieved: {{ tweets.length }}</div>
-      <div>Number of sentences: {{ sentences.length }}</div>
+      <div v-if="tweets !== null">Number of tweets retrieved: {{ tweets.length }}</div>
+      <div v-if="sentences !== null">Number of sentences: {{ sentences.length }}</div>
     </div>
   </div>
 </template>
@@ -96,15 +96,34 @@ export default class Home extends Vue {
       subdomain: 'cors-anywhere.herokuapp.com/https://api',
       bearer_token: this.twitterBearerToken,
     });
-    const params = {
+    const twitterParams = {
       screen_name: this.screenname,
       count: 200,
       tweet_mode: 'extended',
       include_rts: false,
     };
+    const twitterParams2 = {
+      screen_name: this.screenname,
+      count: 200,
+      tweet_mode: 'extended',
+      include_rts: false,
+      max_id: 0,
+    };
+    let tweets1 = [];
+    let tweets2 = [];
     try {
-      const response = await app.get('statuses/user_timeline', params);
-      this.tweets = response;
+      const response = await app.get('statuses/user_timeline', twitterParams);
+      tweets1 = response;
+      // We're going to do another API call to get more tweets to work from.
+      const oldestTweet = tweets1[tweets1.length - 1].id;
+      twitterParams2.max_id = oldestTweet;
+      try {
+        const response2 = await app.get('statuses/user_timeline', twitterParams2);
+        tweets2 = response2;
+        this.tweets = tweets1.concat(tweets2);
+      } catch (e) {
+        this.error = e;
+      }
     } catch (e) {
       this.error = e;
     }
