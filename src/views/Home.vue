@@ -32,6 +32,9 @@
       <div class="poem__author">A poem by {{ author }}</div>
       <div v-html="poem"></div>
     </div>
+    <div class="error" v-if="error !== null">
+      {{ error }}
+    </div>
     <div class="debug">
       <div>{{ atUsername }}</div>
       <div>{{ screenname }}</div>
@@ -134,10 +137,14 @@ export default class Home extends Vue {
         tweets2 = response2;
         this.tweets = tweets1.concat(tweets2);
       } catch (e) {
+        console.log(1);
         this.error = e;
+        this.generating = false;
       }
     } catch (e) {
+      console.log(2);
       this.error = e;
+      this.generating = false;
     }
   }
 
@@ -191,7 +198,9 @@ export default class Home extends Vue {
       this.generating = false;
       this.ready = true;
     } catch (e) {
+      console.log(3);
       this.error = e;
+      this.generating = false;
     }
   }
 
