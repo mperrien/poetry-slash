@@ -163,7 +163,7 @@ export default class Home extends Vue {
         const tweet: string = this.filterScreennameFromReplies(t);
         const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
         tweetAsSentences.forEach( async (s) => {
-          if (!s.includes('http://') && !s.includes('https://')) { // Filter out sentences with links.
+          if (!s.includes('://')) { // Filter out sentences with links.
             const sentenceObject = {
               text: s,
               syllables: syllable(s),
