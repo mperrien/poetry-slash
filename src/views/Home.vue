@@ -154,6 +154,7 @@ export default class Home extends Vue {
     this.tweets = null;
     this.error = null;
     this.sentences = [];
+    this.poem = '';
     // console.log(this.nameParam);
     if (this.nameParam === '' && this.params !== null) {
       // console.log('yolo');
