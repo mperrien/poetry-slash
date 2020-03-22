@@ -26,6 +26,7 @@
     <div class="poem" v-if="ready">
       <h2 class="poem__title">{{ title }}</h2>
       <div class="poem__author">A poem by {{ author }}</div>
+      <div v-html="poem"></div>
     </div>
     <div class="debug">
       <div>{{ atUsername }}</div>
@@ -62,12 +63,14 @@ export default class Home extends Vue {
   private username: string = '@realDonaldTrump';
   private rhymes: boolean = true;
   private alexandrine: boolean = true;
+  private style: string = 'classical';
   private displayInfo: boolean = false;
   private tweets: any | null = null;
   private error: any | null = null;
   private sentences: any[] = [];
   private title: string = '';
   private author: string = '';
+  private poem: string = '';
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
@@ -160,6 +163,16 @@ export default class Home extends Vue {
           }
         });
       });
+      if (this.style === 'classical') {
+        for (let i = 0; i < 4; i++) {
+          this.poem = this.poem.concat('<p>');
+          for (let j = 0; j < 4; j++) {
+            const index = this.pickARandomSentenceIndex();
+            this.poem = this.poem.concat(this.sentences[index].text, '<br/>');
+          }
+          this.poem = this.poem.concat('</p>');
+        }
+      }
       this.generateTitle();
       this.generating = false;
       this.ready = true;
