@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="form__submit">
-          <button type="submit" :class="{'loading': generating}" @click.prevent='testGeneratePoem'>Generate Poem</button>
+          <button type="submit" :class="{'loading': generating}" @click.prevent='generatePoem'>Generate Poem</button>
         </div>
       </form>
     </div>
@@ -132,7 +132,7 @@ export default class Home extends Vue {
     }
   }
 
-  private async testGeneratePoem() {
+  private async generatePoem() {
     this.ready = false;
     this.generating = true;
     // console.log(this.nameParam);
