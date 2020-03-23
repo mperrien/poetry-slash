@@ -27,22 +27,32 @@
         </div>
       </form>
     </div>
-    <div class="poem" v-if="ready">
-      <h2 class="poem__title">{{ title }}</h2>
-      <div class="poem__author">A poem by {{ author }}</div>
-      <div v-html="poem"></div>
-    </div>
-    <div class="error" v-if="error.length !== 0">
-      {{ error }}
-    </div>
-    <div class="debug">
-      <div>{{ atUsername }}</div>
-      <div>{{ screenname }}</div>
-      <div>Rhymes: {{ rhymes }}</div>
-      <div>Alexandrine: {{ alexandrine }}</div>
-      <div>Exclude longer sentences: {{ shortlines }}</div>
-      <div v-if="tweets !== null">Number of tweets retrieved: {{ tweets.length }}</div>
-      <div v-if="sentences !== null">Number of sentences: {{ sentences.length }}</div>
+    <div class="container">
+      <div class="error" v-if="error.length !== 0">
+        <p>
+          <strong>The poem couldn't be generated.</strong><br/>
+          Here's what our advanced errors-handling system has to say about it:
+          <ul>
+            <li v-for="e in error" :key="e">
+              {{ e }}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="poem" v-if="ready">
+        <h2 class="poem__title">{{ title }}</h2>
+        <div class="poem__author">A poem by {{ author }}</div>
+        <div v-html="poem"></div>
+      </div>
+      <div class="debug" v-if="debug">
+        <div>{{ atUsername }}</div>
+        <div>{{ screenname }}</div>
+        <div>Rhymes: {{ rhymes }}</div>
+        <div>Alexandrine: {{ alexandrine }}</div>
+        <div>Exclude longer sentences: {{ shortlines }}</div>
+        <div v-if="tweets !== null">Number of tweets retrieved: {{ tweets.length }}</div>
+        <div v-if="sentences !== null">Number of sentences: {{ sentences.length }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +91,8 @@ export default class Home extends Vue {
   private author: string = '';
   private poem: string = '';
 
+  private debug: boolean = false;
+
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterAccessToken: any = process.env.VUE_APP_TWITTERTOKEN;
@@ -105,6 +117,7 @@ export default class Home extends Vue {
   }
 
   private async fetchTweets() {
+    // TODO Maybe use users/show endpoint to check if user exists or is private...
     const Twitter = require('twitter-lite');
     const app = new Twitter({
       subdomain: 'cors-anywhere.herokuapp.com/https://api',
@@ -127,6 +140,10 @@ export default class Home extends Vue {
     let tweets2 = [];
     try {
       const response = await app.get('statuses/user_timeline', twitterParams);
+      if (response.error) {
+        // Because I don't seem to be catching error codes from the API...
+        this.error.push(`Problem while fetching tweets from ${this.atUsername}. Maybe try again with another user.`);
+      }
       tweets1 = response;
       // We're going to do another API call to get more tweets to work from.
       const oldestTweet = tweets1[tweets1.length - 1].id;
@@ -136,11 +153,13 @@ export default class Home extends Vue {
         tweets2 = response2;
         this.tweets = tweets1.concat(tweets2);
       } catch (e) {
-        this.error.push(e);
+        this.error.push(e.message);
         this.generating = false;
       }
     } catch (e) {
-      this.error.push(e);
+      // Twitter API errors are catched earlier.
+      // Errors here probably a consequence of those.
+      // Fail silently
       this.generating = false;
     }
   }
@@ -199,7 +218,7 @@ export default class Home extends Vue {
       this.generating = false;
       this.ready = true;
     } catch (e) {
-      this.error.push(e);
+      this.error.push('Error while generating poem.');
       this.generating = false;
     }
   }
@@ -439,8 +458,20 @@ export default class Home extends Vue {
     }
   }
 }
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 40em;
+}
+.error {
+  margin: 2em 0;
+  padding: 0 2em 0 1.5em;
+
+  border-left: .5em solid $error;
+}
 .poem,
 .debug {
+  margin: 2em 0;
   padding: 2em;
 }
 </style>
