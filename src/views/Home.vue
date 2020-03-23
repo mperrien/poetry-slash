@@ -32,7 +32,7 @@
       <div class="poem__author">A poem by {{ author }}</div>
       <div v-html="poem"></div>
     </div>
-    <div class="error" v-if="error !== null">
+    <div class="error" v-if="error.length !== 0">
       {{ error }}
     </div>
     <div class="debug">
@@ -75,7 +75,7 @@ export default class Home extends Vue {
   private style: string = 'classical';
   private displayInfo: boolean = false;
   private tweets: any | null = null;
-  private error: any | null = null;
+  private error: any[] = [];
   private sentences: any[] = [];
   private title: string = '';
   private author: string = '';
@@ -96,7 +96,6 @@ export default class Home extends Vue {
   };
 
   public async created() {
-    // console.log(this.twitterConsumerKey);
     this.params = new URLSearchParams(document.location.search.substring(1));
     const nameParam = this.params.get('username');
     if (nameParam) {
@@ -137,15 +136,36 @@ export default class Home extends Vue {
         tweets2 = response2;
         this.tweets = tweets1.concat(tweets2);
       } catch (e) {
-        console.log(1);
-        this.error = e;
+        this.error.push(e);
         this.generating = false;
       }
     } catch (e) {
-      console.log(2);
-      this.error = e;
+      this.error.push(e);
       this.generating = false;
     }
+  }
+
+  private async extractSentences() {
+    this.tweets.forEach( (t: any) => {
+      const text = t.full_text;
+      // TODO Better filter usernames at begining of tweets.
+      const tweetAsSentences: string[] = text.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
+      tweetAsSentences.forEach( async (s) => {
+        if (!s.includes('://')) { // Filter out sentences with links.
+          const cleanSentence = this.removeUsernamesAtSentenceStart(s);
+          const sentenceObject = {
+            text: cleanSentence,
+            syllables: syllable(s),
+          };
+
+          if (this.shortlines) {
+            if (sentenceObject.syllables < 21) {
+              this.sentences.push(sentenceObject);
+            }
+          }
+        }
+      });
+    });
   }
 
   private async generatePoem() {
@@ -153,40 +173,18 @@ export default class Home extends Vue {
     this.ready = false;
     this.generating = true;
     this.tweets = null;
-    this.error = null;
+    this.error = [];
     this.sentences = [];
     this.poem = '';
-    // console.log(this.nameParam);
     if (this.nameParam === '' && this.params !== null) {
-      // console.log('yolo');
       // this.params.set('username', encodeURI(this.username));
       const encodedUsername: string = encodeURI(this.username);
-      // console.log(encodedUsername);
       // document.location.search = `?username=${encodedUsername}`;
     }
     try {
       await this.fetchTweets();
       this.author = this.tweets[0].user.name;
-      this.sentences = [];
-      this.tweets.forEach( (t: any) => {
-        const tweet: string = this.filterScreennameFromReplies(t);
-        // TODO Better filter usernames at begining of tweets.
-        const tweetAsSentences: string[] = tweet.replace(/([.?!])\s*(?=[A-Z])/g, '$1|').split('|');
-        tweetAsSentences.forEach( async (s) => {
-          if (!s.includes('://')) { // Filter out sentences with links.
-            const sentenceObject = {
-              text: s,
-              syllables: syllable(s),
-            };
-
-            if (this.shortlines) {
-              if (sentenceObject.syllables < 21) {
-                this.sentences.push(sentenceObject);
-              }
-            }
-          }
-        });
-      });
+      await this.extractSentences();
       if (this.style === 'classical') {
         for (let i = 0; i < 4; i++) {
           this.poem = this.poem.concat('<p>');
@@ -201,8 +199,7 @@ export default class Home extends Vue {
       this.generating = false;
       this.ready = true;
     } catch (e) {
-      console.log(3);
-      this.error = e;
+      this.error.push(e);
       this.generating = false;
     }
   }
@@ -223,15 +220,16 @@ export default class Home extends Vue {
     return index;
   }
 
-  private filterScreennameFromReplies(t: any) {
-    let tweet: string = '';
-    if (t.in_reply_to_screen_name !== null) {
-      const charsToRemove = t.in_reply_to_screen_name.length + 2; // + 2 = @ + ' '
-      tweet = t.full_text.substring(charsToRemove);
+  private removeUsernamesAtSentenceStart(str: string) {
+    if (str.charAt(0) === '@') {
+      while (str.charAt(0) === '@') {
+        const newStr = str.split(' ').slice(1).join(' ');
+        str = newStr;
+      }
+      return str;
     } else {
-      tweet = t.full_text;
+      return str;
     }
-    return tweet;
   }
 
   private get atUsername() {
