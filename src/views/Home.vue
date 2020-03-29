@@ -3,35 +3,52 @@
     <div class="form-wrapper">
       <form class="form">
         <div class="form__fields">
-          <div class="field field--text field--dark">
-            <label for="username">Twitter user</label>
-            <input type="text" name="username" id="username" required placeholder="@username" v-model="username">
-            <svg class="twitter-logo" xmlns="http://www.w3.org/2000/svg" width="30" height="24.333"><path d="M9.5 24.333C20.833 24.333 27 15 27 6.833V6a13.548 13.548 0 003-3.167 13.836 13.836 0 01-3.5 1A6.484 6.484 0 0029.167.5 15.287 15.287 0 0125.333 2a5.952 5.952 0 00-4.5-2 6.262 6.262 0 00-6.167 6.167 3.249 3.249 0 00.167 1.333A17.231 17.231 0 012.167 1a6.383 6.383 0 00-.833 3.167A6.622 6.622 0 004 9.333 5.619 5.619 0 011.167 8.5a6.091 6.091 0 005 6 5.138 5.138 0 01-1.667.167 2.836 2.836 0 01-1.167-.167 6.314 6.314 0 005.833 4.333A12.584 12.584 0 011.5 21.5a4.614 4.614 0 01-1.5-.167 15.731 15.731 0 009.5 3" fill-rule="evenodd"/></svg>
+          <div class="fetch-options">
+            <div class="field field--text field--dark">
+              <label for="username">Twitter user</label>
+              <input type="text" name="username" id="username" required placeholder="@username" v-model="username">
+              <svg class="twitter-logo" xmlns="http://www.w3.org/2000/svg" width="30" height="24.333"><path d="M9.5 24.333C20.833 24.333 27 15 27 6.833V6a13.548 13.548 0 003-3.167 13.836 13.836 0 01-3.5 1A6.484 6.484 0 0029.167.5 15.287 15.287 0 0125.333 2a5.952 5.952 0 00-4.5-2 6.262 6.262 0 00-6.167 6.167 3.249 3.249 0 00.167 1.333A17.231 17.231 0 012.167 1a6.383 6.383 0 00-.833 3.167A6.622 6.622 0 004 9.333 5.619 5.619 0 011.167 8.5a6.091 6.091 0 005 6 5.138 5.138 0 01-1.667.167 2.836 2.836 0 01-1.167-.167 6.314 6.314 0 005.833 4.333A12.584 12.584 0 011.5 21.5a4.614 4.614 0 01-1.5-.167 15.731 15.731 0 009.5 3" fill-rule="evenodd"/></svg>
+            </div>
+            <div class="field field--select field--dark">
+              <label for="number" class="screen-reader-text">Number of tweets to retrieve</label>
+              <span>Fetch</span>
+              <select name="number" id="number" required v-model="numberOfTweets">
+                <option value="1">200</option>
+                <option value="2">400</option>
+                <option value="3">600</option>
+                <option value="4">800</option>
+                <option value="5">1000</option>
+              </select>
+              <span>tweets</span>
+            </div>
+            <div class="field field--checkbox field--dark">
+              <input type="checkbox" id="shortlines" name="shortlines" v-model="shortlines">
+              <label for="shortlines">Remove sentences longer than 20 syllables (recommended).</label>
+            </div>
           </div>
-          <div class="field field--select field--dark">
-            <label for="number" class="screen-reader-text">Number of tweets to retrieve</label>
-            <span>Fetch</span>
-            <select name="number" id="number" required v-model="numberOfTweets">
-              <option value="1">200</option>
-              <option value="2">400</option>
-              <option value="3">600</option>
-              <option value="4">800</option>
-              <option value="5">1000</option>
-            </select>
-            <span>tweets</span>
-          </div>
-          <div class="field field--checkbox field--light">
-            <input type="checkbox" id="rhymes" name="rhymes" v-model="rhymes">
-            <label for="rhymes"><strong>Try</strong> to make it rhyme</label>
-          </div>
-          <div class="field field--checkbox field--light">
-            <input type="checkbox" id="shortlines" name="shortlines" v-model="shortlines">
-            <label for="shortlines">Remove sentences longer than 20 syllables (recommended).</label>
-          </div>
-          <div class="field field--checkbox field--light">
-            <input type="checkbox" id="alexandrine" name="alexandrine" v-model="alexandrine">
-            <label for="alexandrine"><strong>Try</strong> to make alexandrines <button class="info-button" @click.prevent="displayInfo = !displayInfo"><span class="screen-reader-text">Help</span>?</button></label>
-            <p class="infobox" v-show="displayInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
+          <div class="poem-options">
+            <div class="field field--checkbox field--light" v-if="false">
+              <input type="checkbox" id="rhymes" name="rhymes" v-model="rhymes">
+              <label for="rhymes"><strong>Try</strong> to make it rhyme</label>
+            </div>
+            <div class="field field--checkbox field--light">
+              <input type="checkbox" id="norepeats" name="norepeats" v-model="noRepeats">
+              <label for="norepeats">Don't use the same line twice</label>
+            </div>
+            <div class="field field--checkbox field--light">
+              <input type="radio" id="freeform" name="style" value="freeform" v-model="style">
+              <label for="freeform">No particular rules (recommended)</label>
+            </div>
+            <div class="field field--checkbox field--light">
+              <input type="radio" id="alexandrine" name="style" value="alexandrine" v-model="style">
+              <label for="alexandrine">Alexandrines (might not work) <button class="info-button" @click.prevent="displayAlexandrinesInfo = !displayAlexandrinesInfo"><span class="screen-reader-text">Help</span>?</button></label>
+              <p class="infobox" v-show="displayAlexandrinesInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
+            </div>
+            <div class="field field--checkbox field--light">
+              <input type="radio" id="haiku" name="style" value="haiku" v-model="style">
+              <label for="haiku">Haiku (might not work) <button class="info-button" @click.prevent="displayHaikuInfo = !displayHaikuInfo"><span class="screen-reader-text">Help</span>?</button></label>
+              <p class="infobox" v-show="displayHaikuInfo">“Haiku is a very short form of Japanese poetry. Traditional haiku often consist of 17 on (also known as morae though often loosely translated as "syllables"), in three phrases of 5, 7, and 5 on, respectively.“ says Wikipedia.</p>
+            </div>
           </div>
         </div>
         <div class="form__submit">
@@ -52,18 +69,26 @@
         </p>
       </div>
       <div class="poem" v-if="ready">
-        <h2 class="poem__title">{{ title }}</h2>
-        <div class="poem__author">A poem by {{ author }}</div>
+        <h2 class="poem__title" v-if="title !== ''">{{ title }}</h2>
+        <div class="poem__author">A <slot v-if="style === 'haiku'">haiku</slot><slot v-else>poem</slot> by {{ author }}</div>
         <div v-html="poem"></div>
       </div>
       <div class="debug" v-if="debug">
         <div>{{ atUsername }}</div>
         <div>{{ screenname }}</div>
         <div>Rhymes: {{ rhymes }}</div>
-        <div>Alexandrine: {{ alexandrine }}</div>
+        <div>Style: {{ style }}</div>
         <div>Exclude longer sentences: {{ shortlines }}</div>
         <div v-if="tweets !== null">Number of tweets retrieved: {{ tweets.length }}</div>
         <div v-if="sentences !== null">Number of sentences: {{ sentences.length }}</div>
+        <div v-if="style === 'alexandrine'">
+          Number of alexandrines: {{ alexandrines.length }}<br/>
+          Number of half-alexandrines: {{ halfAlexandrines.length }}<br/>
+        </div>
+        <div v-if="style === 'haiku'">
+          Number of Sevens: {{ sevenSyllables.length }}<br/>
+          Number of Fives: {{ fiveSyllables.length }}<br/>
+        </div>
       </div>
     </div>
   </div>
@@ -95,19 +120,24 @@ export default class Home extends Vue {
   private oldestTweet: number = 0;
   private twitterParams: {} = {};
 
-  private rhymes: boolean = true;
-  private alexandrine: boolean = true;
+  private rhymes: boolean = false;
+  private noRepeats: boolean = true;
   private shortlines: boolean = true;
-  private style: string = 'classical';
-  private displayInfo: boolean = false;
+  private style: string = 'freeform';
+  private displayAlexandrinesInfo: boolean = false;
+  private displayHaikuInfo: boolean = false;
   private tweets: any[] = [];
   private error: any[] = [];
   private sentences: any[] = [];
+  private alexandrines: any[] = [];
+  private halfAlexandrines: any[] = [];
+  private sevenSyllables: any[] = [];
+  private fiveSyllables: any[] = [];
   private title: string = '';
   private author: string = '';
   private poem: string = '';
 
-  private debug: boolean = false;
+  private debug: boolean = true;
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
@@ -188,10 +218,25 @@ export default class Home extends Vue {
             text: cleanSentence,
             syllables: syllable(s),
           };
-
-          if (this.shortlines) {
-            if (sentenceObject.syllables < 21) {
+          if (this.style === 'freeform') {
+            if (this.shortlines) {
+              if (sentenceObject.syllables < 21) {
+                this.sentences.push(sentenceObject);
+              }
+            } else {
               this.sentences.push(sentenceObject);
+            }
+          } else if (this.style === 'alexandrine') {
+            if (sentenceObject.syllables === 16) {
+              this.alexandrines.push(sentenceObject);
+            } else if (sentenceObject.syllables === 8) {
+              this.halfAlexandrines.push(sentenceObject);
+            }
+          } else if (this.style === 'haiku') {
+            if (sentenceObject.syllables === 7) {
+              this.sevenSyllables.push(sentenceObject);
+            } else if (sentenceObject.syllables === 5) {
+              this.fiveSyllables.push(sentenceObject);
             }
           }
         }
@@ -203,11 +248,7 @@ export default class Home extends Vue {
     // TODO Don't make the alexandrines ? a button, because it prevents submitting the form with return key
     this.ready = false;
     this.generating = true;
-    this.oldestTweet = 0;
-    this.tweets = [];
-    this.error = [];
-    this.sentences = [];
-    this.poem = '';
+    this.resetData();
     if (this.nameParam === '' && this.params !== null) {
       // this.params.set('username', encodeURI(this.username));
       const encodedUsername: string = encodeURI(this.username);
@@ -215,19 +256,156 @@ export default class Home extends Vue {
     }
     try {
       await this.fetchTweets();
+      console.log(`tweets fetched: ${this.tweets.length}`);
       this.author = this.tweets[0].user.name;
       await this.extractSentences();
-      if (this.style === 'classical') {
-        for (let i = 0; i < 4; i++) {
+      console.log(`sentences extracted`);
+      console.log(this.sentences.length);
+      console.log(this.alexandrines.length);
+      console.log(this.sevenSyllables.length);
+      if (this.style === 'freeform') {
+        const numberOfPossibleStrophes = Math.floor(this.sentences.length / 4);
+        const numberOfStrophesToGenerate = Math.max(numberOfPossibleStrophes, 4);
+        for (let i = 0; i < numberOfStrophesToGenerate; i++) {
           this.poem = this.poem.concat('<p>');
           for (let j = 0; j < 4; j++) {
-            const index = this.pickARandomSentenceIndex();
+            const index = this.pickARandomSentenceIndex(this.sentences);
             this.poem = this.poem.concat(this.sentences[index].text, '<br/>');
+            if (this.noRepeats === true) {
+              this.sentences.splice(index, 1);
+            }
           }
           this.poem = this.poem.concat('</p>');
         }
+        this.generateTitle(this.sentences);
+      } else if (this.style === 'alexandrine') {
+        const numberOfLines = this.alexandrines.length + Math.floor(this.halfAlexandrines.length / 2);
+        const numberOfFullStrophes = Math.floor(numberOfLines / 4);
+        const numberOfStrophesToGenerate = Math.max(numberOfFullStrophes, 4);
+        for (let i = 0; i < numberOfStrophesToGenerate; i++) {
+          this.poem = this.poem.concat('<p>');
+          for (let j = 0; j < 4; j++) {
+            if (j % 2 === 0) {
+              // For first and third lines, try to pick a full alexandrine.
+              // If none are availables, pick two half-alexandrines.
+              if (this.alexandrines.length > 0) {
+                const index = this.pickARandomSentenceIndex(this.alexandrines);
+                this.poem = this.poem.concat(this.alexandrines[index].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.alexandrines.splice(index, 1);
+                }
+              } else {
+                const indexA = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexA].text);
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexA, 1);
+                }
+                const indexB = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexB].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexB, 1);
+                }
+              }
+            } else {
+              // For second and fourth line, do the opposite.
+              if (this.halfAlexandrines.length > 1) { // We need two to make a line
+                const indexA = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexA].text);
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexA, 1);
+                }
+                const indexB = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexB].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexB, 1);
+                }
+              } else {
+                const index = this.pickARandomSentenceIndex(this.alexandrines);
+                this.poem = this.poem.concat(this.alexandrines[index].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.alexandrines.splice(index, 1);
+                }
+              }
+            }
+          }
+          this.poem = this.poem.concat('</p>');
+        }
+        if (numberOfStrophesToGenerate < 3) {
+          // If we could only generate two full strophes,
+          // Generate a third, incomplete, one.
+          const numberOfRemainingLines = numberOfLines % numberOfFullStrophes;
+          this.poem = this.poem.concat('<p>');
+          for (let j = 0; j < numberOfRemainingLines; j++) {
+            if (j % 2 === 0) {
+              // For first and third lines, try to pick a full alexandrine.
+              // If none are availables, pick two half-alexandrines.
+              if (this.alexandrines.length > 0) {
+                const index = this.pickARandomSentenceIndex(this.alexandrines);
+                this.poem = this.poem.concat(this.alexandrines[index].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.alexandrines.splice(index, 1);
+                }
+              } else {
+                const indexA = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexA].text);
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexA, 1);
+                }
+                const indexB = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexB].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexB, 1);
+                }
+              }
+            } else {
+              // For second and fourth line, do the opposite.
+              if (this.halfAlexandrines.length > 1) { // We need two to make a line
+                const indexA = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexA].text);
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexA, 1);
+                }
+                const indexB = this.pickARandomSentenceIndex(this.halfAlexandrines);
+                this.poem = this.poem.concat(this.halfAlexandrines[indexB].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.halfAlexandrines.splice(indexB, 1);
+                }
+              } else {
+                const index = this.pickARandomSentenceIndex(this.alexandrines);
+                this.poem = this.poem.concat(this.alexandrines[index].text, '<br/>');
+                if (this.noRepeats === true) {
+                  this.alexandrines.splice(index, 1);
+                }
+              }
+            }
+          }
+          this.poem = this.poem.concat('</p>');
+
+        }
+        this.generateTitle(this.sentences);
+      } else if (this.style === 'haiku') {
+        if (this.fiveSyllables.length > 1 && this.sevenSyllables.length > 0) {
+          this.poem = this.poem.concat('</p>');
+          const indexA = this.pickARandomSentenceIndex(this.fiveSyllables);
+          this.poem = this.poem.concat(this.fiveSyllables[indexA].text, '<br/>');
+          if (this.noRepeats === true) {
+            this.fiveSyllables.splice(indexA, 1);
+          }
+          const indexB = this.pickARandomSentenceIndex(this.sevenSyllables);
+          this.poem = this.poem.concat(this.sevenSyllables[indexB].text, '<br/>');
+          if (this.noRepeats === true) {
+            this.sevenSyllables.splice(indexB, 1);
+          }
+          const indexC = this.pickARandomSentenceIndex(this.fiveSyllables);
+          this.poem = this.poem.concat(this.fiveSyllables[indexC].text, '<br/>');
+          if (this.noRepeats === true) {
+            this.fiveSyllables.splice(indexC, 1);
+          }
+          this.poem = this.poem.concat('</p>');
+        } else {
+          this.error.push('Not enough lines with 5 or 7 syllables. Couldn\'t generate a haiku.');
+        }
       }
-      this.generateTitle();
       this.generating = false;
       this.ready = true;
     } catch (e) {
@@ -236,19 +414,31 @@ export default class Home extends Vue {
     }
   }
 
-  private generateTitle() {
+  private generateTitle(source: any[]) {
     let syllables: number = 0;
     let s: any | null = null;
     while (syllables < 6 || syllables > 15) {
-      const i = this.pickARandomSentenceIndex();
+      const i = this.pickARandomSentenceIndex(source);
       s = this.sentences[i];
       syllables = s.syllables;
     }
     this.title = s.text;
   }
 
-  private pickARandomSentenceIndex() {
-    const index = Math.floor(Math.random() * Math.floor(this.sentences.length));
+  private resetData() {
+    this.oldestTweet = 0;
+    this.tweets = [];
+    this.error = [];
+    this.sentences = [];
+    this.halfAlexandrines = [];
+    this.sevenSyllables = [];
+    this.fiveSyllables = [];
+    this.poem = '';
+    this.title = '';
+  }
+
+  private pickARandomSentenceIndex(source: any[]) {
+    const index = Math.floor(Math.random() * Math.floor(source.length));
     return index;
   }
 
