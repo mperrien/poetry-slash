@@ -357,6 +357,11 @@ export default class Home extends Vue {
       span {
         color: $violet-100;
       }
+      select {
+        width: 4.5em;
+
+        text-align: center;
+      }
     }
     &--checkbox {
       padding: .75em .75em .25em;
