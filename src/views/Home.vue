@@ -35,16 +35,16 @@
               <input type="checkbox" id="norepeats" name="norepeats" v-model="noRepeats">
               <label for="norepeats">Don't use the same line twice</label>
             </div>
-            <div class="field field--checkbox field--light">
+            <div class="field field--radio field--light">
               <input type="radio" id="freeform" name="style" value="freeform" v-model="style">
               <label for="freeform">No particular rules (recommended)</label>
             </div>
-            <div class="field field--checkbox field--light">
+            <div class="field field--radio field--light">
               <input type="radio" id="alexandrine" name="style" value="alexandrine" v-model="style">
               <label for="alexandrine">Alexandrines (might not work) <button class="info-button" @click.prevent="displayAlexandrinesInfo = !displayAlexandrinesInfo"><span class="screen-reader-text">Help</span>?</button></label>
               <p class="infobox" v-show="displayAlexandrinesInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
             </div>
-            <div class="field field--checkbox field--light">
+            <div class="field field--radio field--light">
               <input type="radio" id="haiku" name="style" value="haiku" v-model="style">
               <label for="haiku">Haiku (might not work) <button class="info-button" @click.prevent="displayHaikuInfo = !displayHaikuInfo"><span class="screen-reader-text">Help</span>?</button></label>
               <p class="infobox" v-show="displayHaikuInfo">“Haiku is a very short form of Japanese poetry. Traditional haiku often consist of 17 on (also known as morae though often loosely translated as "syllables"), in three phrases of 5, 7, and 5 on, respectively.“ says Wikipedia.</p>
@@ -553,7 +553,8 @@ export default class Home extends Vue {
         text-align: center;
       }
     }
-    &--checkbox {
+    &--checkbox,
+    &--radio {
       padding: .75em .75em .25em;
       &:last-child {
         padding-bottom: .75em;
@@ -624,6 +625,20 @@ export default class Home extends Vue {
 
         color: $violet-300;
         font-size: .8em;
+      }
+    }
+    &--radio {
+      input {
+        &:checked {
+          + label::after {
+            border-radius: 50%;
+          }
+        }
+      }
+      label {
+        &::before {
+          border-radius: 50%;
+        }
       }
     }
   }
