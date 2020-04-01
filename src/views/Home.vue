@@ -73,6 +73,9 @@
         <div class="poem__author">A <slot v-if="style === 'haiku'">haiku</slot><slot v-else>poem</slot> by {{ author }}</div>
         <div v-html="poem"></div>
       </div>
+      <div class="status">
+        <p v-html="status"></p>
+      </div>
       <div class="debug" v-if="debug">
         <div>{{ atUsername }}</div>
         <div>{{ screenname }}</div>
@@ -137,7 +140,8 @@ export default class Home extends Vue {
   private author: string = '';
   private poem: string = '';
 
-  private debug: boolean = true;
+  private debug: boolean = false;
+  private status: string = '';
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
@@ -163,6 +167,7 @@ export default class Home extends Vue {
   }
 
   private async fetchTweets() {
+    this.status = this.status.concat('Fetching tweets...', '<br/>');
     // TODO Maybe use users/show endpoint to check if user exists or is private...
     const Twitter = require('twitter-lite');
     const app = new Twitter({
@@ -204,9 +209,11 @@ export default class Home extends Vue {
       }
     }
     this.generating = false;
+    this.status = this.status.concat(`Finished fetching ${this.tweets.length} tweets.`, `<br/>`);
   }
 
   private async extractSentences() {
+    this.status = this.status.concat(`Extracting sentences from ${this.tweets.length} tweets...`, `<br/>`);
     this.tweets.forEach( (t: any) => {
       const text = t.full_text;
       // TODO Better filter usernames at begining of tweets.
@@ -218,30 +225,39 @@ export default class Home extends Vue {
             text: cleanSentence,
             syllables: syllable(s),
           };
-          if (this.style === 'freeform') {
-            if (this.shortlines) {
-              if (sentenceObject.syllables < 21) {
+          if (sentenceObject.syllables > 2) {
+            if (this.style === 'freeform') {
+              if (this.shortlines) {
+                if (sentenceObject.syllables < 21) {
+                  this.sentences.push(sentenceObject);
+                }
+              } else {
                 this.sentences.push(sentenceObject);
               }
-            } else {
-              this.sentences.push(sentenceObject);
-            }
-          } else if (this.style === 'alexandrine') {
-            if (sentenceObject.syllables === 16) {
-              this.alexandrines.push(sentenceObject);
-            } else if (sentenceObject.syllables === 8) {
-              this.halfAlexandrines.push(sentenceObject);
-            }
-          } else if (this.style === 'haiku') {
-            if (sentenceObject.syllables === 7) {
-              this.sevenSyllables.push(sentenceObject);
-            } else if (sentenceObject.syllables === 5) {
-              this.fiveSyllables.push(sentenceObject);
+            } else if (this.style === 'alexandrine') {
+              if (sentenceObject.syllables === 16) {
+                this.alexandrines.push(sentenceObject);
+              } else if (sentenceObject.syllables === 8) {
+                this.halfAlexandrines.push(sentenceObject);
+              }
+            } else if (this.style === 'haiku') {
+              if (sentenceObject.syllables === 7) {
+                this.sevenSyllables.push(sentenceObject);
+              } else if (sentenceObject.syllables === 5) {
+                this.fiveSyllables.push(sentenceObject);
+              }
             }
           }
         }
       });
     });
+    if (this.style === 'freeform') {
+      this.status = this.status.concat(`${this.sentences.length} sentences extracted.`, `<br/>`);
+    } else if (this.style === 'alexandrine') {
+      this.status = this.status.concat(`${this.alexandrines.length} alexandrines and ${this.halfAlexandrines.length} half alexandrines extracted.`, `<br/>`);
+    } else if (this.style === 'haiku') {
+      this.status = this.status.concat(`${this.sevenSyllables.length} seven-syllable lines and ${this.fiveSyllables.length} five-syllable lines extracted.`, `<br/>`);
+    }
   }
 
   private async generatePoem() {
@@ -256,16 +272,12 @@ export default class Home extends Vue {
     }
     try {
       await this.fetchTweets();
-      console.log(`tweets fetched: ${this.tweets.length}`);
       this.author = this.tweets[0].user.name;
       await this.extractSentences();
-      console.log(`sentences extracted`);
-      console.log(this.sentences.length);
-      console.log(this.alexandrines.length);
-      console.log(this.sevenSyllables.length);
       if (this.style === 'freeform') {
+        this.status = this.status.concat('Creating poem...', '<br/>');
         const numberOfPossibleStrophes = Math.floor(this.sentences.length / 4);
-        const numberOfStrophesToGenerate = Math.max(numberOfPossibleStrophes, 4);
+        const numberOfStrophesToGenerate = Math.min(numberOfPossibleStrophes, 4);
         for (let i = 0; i < numberOfStrophesToGenerate; i++) {
           this.poem = this.poem.concat('<p>');
           for (let j = 0; j < 4; j++) {
@@ -279,9 +291,10 @@ export default class Home extends Vue {
         }
         this.generateTitle(this.sentences);
       } else if (this.style === 'alexandrine') {
+        this.status = this.status.concat('Creating poem in alexandrines...', '<br/>');
         const numberOfLines = this.alexandrines.length + Math.floor(this.halfAlexandrines.length / 2);
         const numberOfFullStrophes = Math.floor(numberOfLines / 4);
-        const numberOfStrophesToGenerate = Math.max(numberOfFullStrophes, 4);
+        const numberOfStrophesToGenerate = Math.min(numberOfFullStrophes, 4);
         for (let i = 0; i < numberOfStrophesToGenerate; i++) {
           this.poem = this.poem.concat('<p>');
           for (let j = 0; j < 4; j++) {
@@ -384,6 +397,7 @@ export default class Home extends Vue {
         }
         this.generateTitle(this.sentences);
       } else if (this.style === 'haiku') {
+        this.status = this.status.concat('Creating haiku...', '<br/>');
         if (this.fiveSyllables.length > 1 && this.sevenSyllables.length > 0) {
           this.poem = this.poem.concat('</p>');
           const indexA = this.pickARandomSentenceIndex(this.fiveSyllables);
@@ -409,9 +423,10 @@ export default class Home extends Vue {
       this.generating = false;
       this.ready = true;
     } catch (e) {
-      this.error.push('Error while generating poem.');
+      this.error.push('Error while generating poem. Maybe try again with a different user or different settings.');
       this.generating = false;
     }
+    this.status = this.status.concat('Done!', '<br/>');
   }
 
   private generateTitle(source: any[]) {
@@ -435,6 +450,7 @@ export default class Home extends Vue {
     this.fiveSyllables = [];
     this.poem = '';
     this.title = '';
+    this.status = '';
   }
 
   private pickARandomSentenceIndex(source: any[]) {
@@ -706,6 +722,7 @@ export default class Home extends Vue {
   border-left: .5em solid $error;
 }
 .poem,
+.status,
 .debug {
   margin: 2em 0;
   padding: 2em;
