@@ -504,8 +504,11 @@ export default class Home extends Vue {
 }
 .form {
   margin: 0 auto;
-  width: 24em;
+  width: 100%;
   max-width: 90vw;
+  @media (min-width: 36em) {
+    width: 24em;
+  }
   &__fields,
   &__submit {
     width: 100%;
@@ -532,20 +535,37 @@ export default class Home extends Vue {
     &--text {
       padding: .75em .75em .25em;
       label,
-      input
+      input {
+        display: block;
+        @media (min-width: 32em) {
+          display: inline-block;
+        }
+      }
       .twitter-logo {
-        display: inline-block;
+        display: none;
+        @media (min-width: 36em) {
+          display: inline-block;
+        }
       }
       label {
-        width: 5.5em;
+        width: 100%;
+        @media (min-width: 32em) {
+          width: 5.5em;
+        }
       }
       input {
-        width: calc(100% - 5.5em - 40px);
+        width: 100%;
 
         background-color: transparent;
         border: none;
 
         color: $violet-100;
+        @media (min-width: 32em) {
+          width: calc(100% - 6em);
+        }
+        @media (min-width: 36em) {
+          width: calc(100% - 5.5em - 40px);
+        }
         &::placeholder {
           opacity: 1;
 
