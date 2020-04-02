@@ -95,6 +95,9 @@
         </div>
       </div>
     </div>
+    <div class="footer">
+      <router-link to="/about">About</router-link>
+    </div>
   </div>
 </template>
 
