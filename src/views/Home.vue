@@ -73,7 +73,7 @@
         <div class="poem__author">A <slot v-if="style === 'haiku'">haiku</slot><slot v-else>poem</slot> by {{ author }}</div>
         <div v-html="poem"></div>
       </div>
-      <div class="status">
+      <div class="status" v-if="displayStatus">
         <p v-html="status"></p>
       </div>
       <div class="debug" v-if="debug">
@@ -140,6 +140,7 @@ export default class Home extends Vue {
   private title: string = '';
   private author: string = '';
   private poem: string = '';
+  private displayStatus: boolean = true;
   private status: string = '';
 
   private debug: boolean = true;
