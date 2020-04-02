@@ -41,12 +41,12 @@
             </div>
             <div class="field field--radio field--light">
               <input type="radio" id="haiku" name="style" value="haiku" v-model="style">
-              <label for="haiku">Haiku <button class="info-button" @click.prevent="displayHaikuInfo = !displayHaikuInfo"><span class="screen-reader-text">Help</span>?</button></label>
+              <label for="haiku">Haiku <span role="button" class="info-button" @click.prevent="displayHaikuInfo = !displayHaikuInfo"><span class="screen-reader-text">Help</span>?</span></label>
               <p class="infobox" v-show="displayHaikuInfo">“Haiku is a very short form of Japanese poetry. Traditional haiku often consist of 17 on (also known as morae though often loosely translated as "syllables"), in three phrases of 5, 7, and 5 on, respectively.“ says Wikipedia.</p>
             </div>
             <div class="field field--radio field--light">
               <input type="radio" id="alexandrine" name="style" value="alexandrine" v-model="style">
-              <label for="alexandrine">Alexandrines (at your own risk...) <button class="info-button" @click.prevent="displayAlexandrinesInfo = !displayAlexandrinesInfo"><span class="screen-reader-text">Help</span>?</button></label>
+              <label for="alexandrine">Alexandrines (at your own risk...) <span role="button" class="info-button" @click.prevent="displayAlexandrinesInfo = !displayAlexandrinesInfo"><span class="screen-reader-text">Help</span>?</span></label>
               <p class="infobox" v-show="displayAlexandrinesInfo">“The French alexandrine is a syllabic poetic meter of 12 syllables with a medial caesura dividing the line into two hemistichs (half-lines) of six syllables each.“ says Wikipedia.</p>
             </div>
           </div>
@@ -140,10 +140,10 @@ export default class Home extends Vue {
   private title: string = '';
   private author: string = '';
   private poem: string = '';
-  private displayStatus: boolean = true;
+  private displayStatus: boolean = false;
   private status: string = '';
 
-  private debug: boolean = true;
+  private debug: boolean = false;
   private environment: string = process.env.NODE_ENV;
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
