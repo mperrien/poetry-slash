@@ -77,6 +77,7 @@
         <p v-html="status"></p>
       </div>
       <div class="debug" v-if="debug">
+        <div>Environment: {{ environment }}</div>
         <div>{{ atUsername }}</div>
         <div>{{ screenname }}</div>
         <div>Rhymes: {{ rhymes }}</div>
@@ -139,9 +140,10 @@ export default class Home extends Vue {
   private title: string = '';
   private author: string = '';
   private poem: string = '';
-
-  private debug: boolean = false;
   private status: string = '';
+
+  private debug: boolean = true;
+  private environment: string = process.env.NODE_ENV;
 
   private twitterConsumerKey: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
   private twitterConsumerSecret: any = process.env.VUE_APP_TWITTERCONSUMERKEY;
